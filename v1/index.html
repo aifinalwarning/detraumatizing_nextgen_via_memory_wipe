@@ -1,0 +1,1252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Long-Form Commitment Index — Music Artists in Documented Long-Term Relationships</title>
+  <style>
+    /* =========================
+       TOOLTIP: Core styling
+       What: Minimal, readable, print-friendly CSS
+       How to extend: Add new theme vars in :root and toggle with data-theme on <html>
+       Outcome: No external deps; good contrast; clean print output
+    ========================== */
+    :root{
+      --bg:#0b0d12;
+      --panel:#121724cc;
+      --panel2:#0f1420cc;
+      --text:#e9eefc;
+      --muted:#a9b3d6;
+      --faint:#6b7393;
+      --accent:#7dd3fc;
+      --accent2:#c4b5fd;
+      --good:#86efac;
+      --warn:#fde68a;
+      --bad:#fca5a5;
+      --line:#223056;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --max: 1100px;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 15% 20%, rgba(124,58,237,.18), transparent 55%),
+                  radial-gradient(900px 600px at 85% 15%, rgba(14,165,233,.18), transparent 55%),
+                  radial-gradient(1000px 800px at 50% 90%, rgba(34,197,94,.10), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      font-family:var(--sans);
+      overflow-x:hidden;
+    }
+    a{color:var(--accent); text-decoration:none;}
+    a:hover{text-decoration:underline;}
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px;}
+    .card{
+      background: linear-gradient(180deg, rgba(18,23,36,.92), rgba(10,12,18,.82));
+      border:1px solid rgba(34,48,86,.65);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .row{display:flex; gap:14px; flex-wrap:wrap;}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px; border-radius:999px;
+      border:1px solid rgba(34,48,86,.65);
+      background: rgba(18,23,36,.55);
+      color:var(--muted);
+      font-size:13px;
+      user-select:none;
+    }
+    .pill b{color:var(--text); font-weight:700;}
+    .kbd{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:2px 6px;
+      border:1px solid rgba(34,48,86,.8);
+      border-radius:8px;
+      background: rgba(0,0,0,.25);
+      color:var(--text);
+    }
+
+    /* =========================
+       TOOLTIP: Sticky nav
+       What: Always-available table of contents + actions
+       How to extend: Add <a href="#section-id"> items to .tocLinks
+       Outcome: Fast navigation in long-form docs
+    ========================== */
+    .toc{
+      position:sticky; top:10px; z-index:5;
+      display:flex; flex-wrap:wrap; gap:10px;
+      padding:12px;
+      border-radius:var(--radius);
+      border:1px solid rgba(34,48,86,.65);
+      background: rgba(10,12,18,.55);
+      backdrop-filter: blur(10px);
+    }
+    .toc .left{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+    .toc .right{margin-left:auto; display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    .btn{
+      appearance:none; border:1px solid rgba(34,48,86,.8);
+      background: rgba(18,23,36,.55);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    .btn:hover{filter:brightness(1.1);}
+    .btn:active{transform: translateY(1px);}
+    .btn.small{padding:8px 10px; font-size:13px;}
+    .btn.good{border-color: rgba(34,197,94,.55);}
+    .btn.warn{border-color: rgba(253,224,71,.55);}
+    .btn.bad{border-color: rgba(248,113,113,.55);}
+    .input{
+      width:min(420px, 70vw);
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(34,48,86,.8);
+      background: rgba(0,0,0,.25);
+      color:var(--text);
+      outline:none;
+    }
+    .input:focus{border-color: rgba(125,211,252,.75); box-shadow: 0 0 0 3px rgba(125,211,252,.15);}
+
+    /* =========================
+       TOOLTIP: Hero + parallax
+       What: Long-form vibe with safe, lightweight parallax (no images)
+       How to extend: Add more layers; adjust data-depth
+       Outcome: Cinematic but stable on mobile
+    ========================== */
+    .hero{
+      position:relative;
+      padding:26px 18px 18px;
+      overflow:hidden;
+    }
+    .hero h1{margin:0; font-size: clamp(26px, 3.5vw, 44px); letter-spacing:-.02em;}
+    .hero p{margin:10px 0 0; color:var(--muted); line-height:1.5; font-size:15px;}
+    .hero .subgrid{margin-top:14px; display:grid; grid-template-columns: 1fr; gap:12px;}
+    .parallax{
+      position:absolute; inset:-40px;
+      pointer-events:none;
+      opacity:.55;
+    }
+    .layer{
+      position:absolute; inset:0;
+      transform: translate3d(0,0,0);
+      filter: blur(.2px);
+    }
+    .layer svg{width:100%; height:100%;}
+    .layer .glow{opacity:.55}
+    .layer .thin{opacity:.35}
+    .heroContent{position:relative; z-index:2;}
+
+    /* =========================
+       TOOLTIP: Sections + collapsibles
+       What: <details> for long-form collapsible content
+       How to extend: Add new <details class="drop"> blocks anywhere
+       Outcome: Scannable + deep-dive friendly
+    ========================== */
+    section{margin-top:14px;}
+    .sectionCard{padding:14px;}
+    .sectionCard h2{margin:0 0 8px; font-size:20px;}
+    .muted{color:var(--muted);}
+    .faint{color:var(--faint);}
+    .grid2{display:grid; grid-template-columns: 1fr; gap:12px;}
+    @media (min-width: 920px){
+      .grid2{grid-template-columns: 1.1fr .9fr;}
+    }
+    details.drop{
+      border:1px solid rgba(34,48,86,.65);
+      border-radius: 16px;
+      background: rgba(18,23,36,.40);
+      padding:10px 12px;
+    }
+    details.drop summary{
+      cursor:pointer;
+      font-weight:800;
+      list-style:none;
+      display:flex; align-items:center; gap:10px;
+    }
+    details.drop summary::-webkit-details-marker{display:none;}
+    .chev{
+      width:10px; height:10px; border-right:2px solid var(--muted); border-bottom:2px solid var(--muted);
+      transform: rotate(-45deg);
+      transition: transform .2s ease;
+      margin-left:auto;
+    }
+    details[open] .chev{transform: rotate(45deg);}
+    .drop .content{margin-top:10px; color:var(--muted); line-height:1.55; font-size:14px;}
+    .callout{
+      border-left:4px solid rgba(125,211,252,.7);
+      background: rgba(14,165,233,.08);
+      padding:10px 12px;
+      border-radius: 14px;
+    }
+
+    /* =========================
+       TOOLTIP: Table/list rendering
+       What: Responsive list cards for couples
+       How to extend: Add fields to renderEntry() in JS
+       Outcome: Search + filters without heavy table layout issues
+    ========================== */
+    .list{
+      display:grid; grid-template-columns: 1fr; gap:10px;
+      margin-top:10px;
+    }
+    .entry{
+      padding:12px;
+      border:1px solid rgba(34,48,86,.65);
+      border-radius:16px;
+      background: rgba(10,12,18,.35);
+    }
+    .entryTop{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:baseline;
+    }
+    .entryTop .name{font-weight:900; font-size:16px;}
+    .entryTop .meta{color:var(--muted); font-size:13px;}
+    .tags{margin-top:8px; display:flex; flex-wrap:wrap; gap:8px;}
+    .tag{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(34,48,86,.65);
+      background: rgba(18,23,36,.40);
+      color:var(--muted);
+    }
+    .tag.good{border-color: rgba(34,197,94,.55); color: var(--good);}
+    .tag.warn{border-color: rgba(253,224,71,.55); color: var(--warn);}
+    .tag.bad{border-color: rgba(248,113,113,.55); color: var(--bad);}
+    .sources{margin-top:10px; font-size:13px; color:var(--muted); line-height:1.4;}
+    .sources ul{margin:8px 0 0 18px;}
+    .sources li{margin:4px 0;}
+    .smallNote{font-size:12px; color:var(--faint); margin-top:6px;}
+
+    /* =========================
+       TOOLTIP: HUD + constellation visualizer
+       What: Lightweight gamification HUD + canvas constellation
+       How to extend: Add new stats in hudState and draw logic
+       Outcome: Gives “progress” feedback without external tracking
+    ========================== */
+    .hud{
+      position:fixed;
+      right:12px; bottom:12px;
+      width:min(360px, calc(100vw - 24px));
+      z-index:9;
+      border-radius: 20px;
+      border:1px solid rgba(34,48,86,.75);
+      background: rgba(10,12,18,.72);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hudHeader{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(34,48,86,.65);
+    }
+    .hudHeader b{letter-spacing:.01em;}
+    .hudBody{padding:12px;}
+    .hudGrid{display:grid; grid-template-columns: 1fr 1fr; gap:10px;}
+    .stat{
+      border:1px solid rgba(34,48,86,.65);
+      background: rgba(18,23,36,.35);
+      border-radius: 16px;
+      padding:10px;
+    }
+    .stat .k{color:var(--muted); font-size:12px;}
+    .stat .v{font-size:18px; font-weight:900; margin-top:2px;}
+    #constellation{
+      width:100%; height:120px; display:block;
+      border-radius: 16px;
+      border:1px solid rgba(34,48,86,.65);
+      background: rgba(0,0,0,.25);
+      margin-top:10px;
+    }
+    .hudActions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+    .hudMin{
+      margin-left:auto;
+      font-family: var(--mono);
+      font-size:12px;
+      padding:6px 8px;
+      border-radius:12px;
+      border:1px solid rgba(34,48,86,.65);
+      background: rgba(18,23,36,.35);
+      cursor:pointer;
+      user-select:none;
+    }
+    .hud.minimized .hudBody{display:none;}
+    .hud.minimized #constellation{display:none;}
+
+    /* =========================
+       TOOLTIP: Splash screen
+       What: Animated, non-blocking splash
+       How to extend: Change messages in JS
+       Outcome: “App boots up” feel; works offline
+    ========================== */
+    .splash{
+      position:fixed; inset:0; z-index:20;
+      display:flex; align-items:center; justify-content:center;
+      background: radial-gradient(800px 500px at 50% 30%, rgba(124,58,237,.22), transparent 60%),
+                  radial-gradient(900px 600px at 50% 60%, rgba(14,165,233,.22), transparent 60%),
+                  rgba(0,0,0,.78);
+      backdrop-filter: blur(10px);
+      transition: opacity .35s ease, transform .35s ease;
+    }
+    .splash.hidden{opacity:0; transform: scale(1.02); pointer-events:none;}
+    .splashInner{
+      width:min(720px, calc(100vw - 32px));
+      padding:16px;
+      border-radius: 22px;
+      border:1px solid rgba(34,48,86,.75);
+      background: rgba(10,12,18,.72);
+      box-shadow: var(--shadow);
+      text-align:left;
+    }
+    .splashTitle{font-size:20px; font-weight:900; margin:0;}
+    .splashMsg{color:var(--muted); margin:10px 0 0; line-height:1.5;}
+    .bar{
+      height:10px; border-radius:999px;
+      border:1px solid rgba(34,48,86,.75);
+      background: rgba(0,0,0,.35);
+      overflow:hidden;
+      margin-top:14px;
+    }
+    .bar > i{
+      display:block; height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(125,211,252,.9), rgba(196,181,253,.9));
+      border-radius:999px;
+      animation: load 1.4s ease-in-out infinite;
+    }
+    @keyframes load{
+      0%{width:0%;}
+      50%{width:92%;}
+      100%{width:0%;}
+    }
+
+    /* =========================
+       TOOLTIP: Print stylesheet
+       What: Clean prints, hides HUD + parallax
+       Outcome: Printable reference sheet
+    ========================== */
+    @media print{
+      .toc, .hud, .splash, .parallax{display:none !important;}
+      body{background:#fff; color:#000;}
+      .card, .entry, details.drop{box-shadow:none !important; background:#fff !important; border-color:#ccc !important;}
+      a{color:#000; text-decoration:underline;}
+    }
+  </style>
+</head>
+<body>
+  <!--
+    Zero-Harm + Anti-Inversion Note:
+    This page is a local, offline-first reference tool with no hidden telemetry, no auto-send features,
+    and transparent user-reset controls. It is designed to reduce harmful celebrity-gossip fixation by
+    foregrounding verifiable, pro-social commitment narratives—without pretending to erase or rewrite history.
+  -->
+
+  <div class="splash" id="splash" aria-hidden="false">
+    <div class="splashInner">
+      <p class="splashTitle">Booting the Long-Form Commitment Index ✨</p>
+      <p class="splashMsg" id="splashMsg">
+        Loading offline cache, verifying local state, warming up the constellation…
+      </p>
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Loading"><i></i></div>
+      <p class="smallNote">Tip: This works offline after first load. Your edits stay on-device.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <nav class="toc card" aria-label="Sticky navigation">
+      <div class="left tocLinks">
+        <a class="btn small" href="#top">Top</a>
+        <a class="btn small" href="#dataset">Dataset</a>
+        <a class="btn small" href="#method">Method + Design</a>
+        <a class="btn small" href="#add">Add/Import</a>
+        <a class="btn small" href="#licenses">Attributions</a>
+      </div>
+      <div class="right">
+        <input id="q" class="input" type="search" placeholder="Search artists/couples, genre, verification… (e.g., 'verified', 'country', 'since 1978')" autocomplete="off" />
+        <button class="btn small warn" id="btnExport" title="Export your local dataset as JSON (local-only)">Export JSON</button>
+        <button class="btn small bad" id="btnReset" title="Reset local data (undoes your edits)">Reset Local</button>
+      </div>
+    </nav>
+
+    <header id="top" class="card hero" aria-label="Hero">
+      <div class="parallax" id="parallax" aria-hidden="true">
+        <div class="layer" data-depth="0.15">
+          <svg viewBox="0 0 1200 800" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0" stop-color="rgba(125,211,252,.0)"/>
+                <stop offset="0.5" stop-color="rgba(125,211,252,.22)"/>
+                <stop offset="1" stop-color="rgba(196,181,253,.0)"/>
+              </linearGradient>
+            </defs>
+            <path class="glow" d="M0,540 C220,460 380,640 600,560 C820,480 980,560 1200,500 L1200,800 L0,800 Z" fill="url(#g1)"/>
+          </svg>
+        </div>
+        <div class="layer" data-depth="0.30">
+          <svg viewBox="0 0 1200 800" preserveAspectRatio="none" aria-hidden="true">
+            <path class="thin" d="M0,230 C240,140 380,320 610,250 C830,180 980,280 1200,200" stroke="rgba(125,211,252,.35)" stroke-width="2" fill="none"/>
+            <path class="thin" d="M0,300 C250,220 420,380 620,310 C860,220 980,340 1200,260" stroke="rgba(196,181,253,.28)" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="heroContent">
+        <h1>Long-Form Commitment Index 🎼💍</h1>
+        <p>
+          A local, offline-first reference of <b>music artists in publicly documented long-term committed relationships</b>,
+          with verification levels and sources. It’s a “counter-memory” tool: it doesn’t erase history; it curates a
+          healthier reference set that rewards stability, care, and follow-through.
+        </p>
+        <div class="subgrid">
+          <div class="row">
+            <span class="pill"><b>Offline-first</b> IndexedDB + export</span>
+            <span class="pill"><b>Local-only</b> no telemetry</span>
+            <span class="pill"><b>Searchable</b> + filters</span>
+            <span class="pill"><b>Printable</b> reference</span>
+            <span class="pill"><b>Safety</b> sanitized inputs + gentle rate limits</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="dataset" class="card sectionCard" aria-label="Dataset">
+      <div class="grid2">
+        <div>
+          <h2>Dataset (seed + your local additions)</h2>
+          <p class="muted">
+            “Exhaustive” isn’t realistic here: relationships change, privacy matters, and public documentation is uneven.
+            This dataset is therefore <b>truthy only where sources exist</b>, and it labels uncertainty.
+          </p>
+
+          <details class="drop" open>
+            <summary>
+              Filters & status legend
+              <span class="chev" aria-hidden="true"></span>
+            </summary>
+            <div class="content">
+              <div class="row">
+                <span class="tag good">VERIFIED (recent source)</span>
+                <span class="tag warn">LEGACY (needs re-check)</span>
+                <span class="tag">Genre tags</span>
+                <span class="tag">“Since YYYY”</span>
+              </div>
+              <p class="smallNote">
+                “Verified” here means a <b>recent (2020–2025) reputable source</b> indicates the couple is together.
+                “Legacy” means it appeared in an older list and should be re-verified.
+              </p>
+            </div>
+          </details>
+
+          <div class="row" style="margin-top:10px;">
+            <button class="btn good" id="btnOnlyVerified" title="Show only entries marked Verified">Only Verified</button>
+            <button class="btn warn" id="btnOnlyLegacy" title="Show only entries marked Legacy">Only Legacy</button>
+            <button class="btn" id="btnClearFilters" title="Clear filters">Clear Filters</button>
+            <span class="pill"><b id="countShown">0</b> shown / <b id="countTotal">0</b> total</span>
+          </div>
+        </div>
+
+        <div>
+          <details class="drop" open>
+            <summary>
+              What counts as “committed long-term” here?
+              <span class="chev" aria-hidden="true"></span>
+            </summary>
+            <div class="content">
+              <div class="callout">
+                <p style="margin:0;">
+                  <b>Operational definition:</b> a publicly documented marriage/partnership lasting <b>10+ years</b>,
+                  with a credible source indicating the relationship is still ongoing as of the source date.
+                </p>
+              </div>
+              <p class="smallNote">
+                This avoids speculation about “faithfulness” and focuses on verifiable, consent-respecting facts.
+              </p>
+            </div>
+          </details>
+
+          <details class="drop">
+            <summary>
+              Why the “timeline memory removal” framing is swapped for “counter-memory”
+              <span class="chev" aria-hidden="true"></span>
+            </summary>
+            <div class="content">
+              <p>
+                You can’t delete the past. What you <i>can</i> do is build better “default references” so people stop
+                rehearsing nihilistic narratives. This page is designed as a <b>curation engine</b>, not a reality-rewriter.
+              </p>
+              <p class="smallNote">
+                Translation: no “throwing toxins”; instead we build filters that reduce attention to harmful storyloops.
+              </p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div id="list" class="list" aria-live="polite" aria-label="Entries list"></div>
+    </section>
+
+    <section id="method" class="card sectionCard" aria-label="Method and design">
+      <h2>Method + design intent 🧭</h2>
+
+      <details class="drop" open>
+        <summary>How this page is designed to replace “indifference checkpoints” (without pretending to erase history)<span class="chev"></span></summary>
+        <div class="content">
+          <p>
+            The “star indifference” memory you described is basically a cultural scar tissue: it becomes a reference point
+            people use to justify cynicism. This interface is built to <b>weaken that reflex</b> by:
+          </p>
+          <ul>
+            <li><b>Source-first entries</b>: each couple is attached to sources, so the mind can’t free-float into rumor.</li>
+            <li><b>Verification levels</b>: “Verified” vs “Legacy” avoids false certainty (the sneakiest poison).</li>
+            <li><b>Local-first</b>: no algorithmic engagement loops; no platform incentives to farm outrage.</li>
+            <li><b>Search + print</b>: makes it a practical reference artifact, not a doomscroll machine.</li>
+            <li><b>Gamified gentle reinforcement</b>: “truth points” reward careful verification and adding sources.</li>
+          </ul>
+          <p class="smallNote">
+            This is “counter-memory engineering”: you don’t delete the archive—you change what’s easiest to reach for.
+          </p>
+        </div>
+      </details>
+
+      <details class="drop">
+        <summary>Data hygiene & safety guardrails (sanitization + rate limiting)<span class="chev"></span></summary>
+        <div class="content">
+          <p>
+            Inputs (search/import) are sanitized. Actions that could be spammy are gently rate-limited locally.
+            There’s no hidden analytics, no tracking, no auto-send, and export/reset are explicit buttons.
+          </p>
+        </div>
+      </details>
+
+      <details class="drop">
+        <summary>What you should NOT use this for<span class="chev"></span></summary>
+        <div class="content">
+          <p>
+            Don’t use this as a tool for harassment (“prove X is single”), doxxing, or rumor-validation.
+            It’s built to honor privacy boundaries: publicly documented facts only.
+          </p>
+        </div>
+      </details>
+    </section>
+
+    <section id="add" class="card sectionCard" aria-label="Add or import entries">
+      <h2>Add / Import (local-only) ➕</h2>
+      <div class="grid2">
+        <div>
+          <details class="drop" open>
+            <summary>Add one entry manually<span class="chev"></span></summary>
+            <div class="content">
+              <div class="row">
+                <input class="input" id="inCouple" placeholder="Couple/Artist(s) (e.g., 'Artist A + Artist B')" />
+                <input class="input" id="inSince" placeholder="Since year (YYYY)" inputmode="numeric" />
+              </div>
+              <div class="row" style="margin-top:10px;">
+                <input class="input" id="inTags" placeholder="Tags (comma-separated: genre, country, verified/legacy)" />
+              </div>
+              <div class="row" style="margin-top:10px;">
+                <input class="input" id="inSources" placeholder="Sources (URLs, comma-separated; public reputable sources only)" />
+              </div>
+              <div class="row" style="margin-top:10px;">
+                <button class="btn good" id="btnAdd">Add Entry</button>
+                <span class="smallNote">Tip: include at least 1 reputable source link; mark tag “verified” only if the source is recent.</span>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div>
+          <details class="drop" open>
+            <summary>Import JSON (replace or merge)<span class="chev"></span></summary>
+            <div class="content">
+              <textarea id="inImport" class="input" style="height:160px; width:100%; resize:vertical;" placeholder='Paste JSON exported from this page here'></textarea>
+              <div class="row" style="margin-top:10px;">
+                <button class="btn warn" id="btnMerge">Merge</button>
+                <button class="btn bad" id="btnReplace">Replace</button>
+              </div>
+              <p class="smallNote">
+                “Replace” overwrites local data. “Merge” keeps existing entries and adds new ones (by id).
+              </p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="licenses" class="card sectionCard" aria-label="Attributions and licensing">
+      <h2>Attributions & licensing 📎</h2>
+      <p class="muted">
+        This file is standalone and contains no copied proprietary code. The dataset seed uses publicly available biographical facts.
+      </p>
+      <details class="drop" open>
+        <summary>Sources referenced for the seed dataset<span class="chev"></span></summary>
+        <div class="content">
+          <ul>
+            <li><a href="https://people.com/gloria-and-emilio-estefan-relationship-through-the-years-11801711" target="_blank" rel="noopener">People.com — Gloria & Emilio Estefan relationship feature</a></li>
+            <li><a href="https://people.com/music/paul-mccartney-nancy-shevell-relationship-timeline/" target="_blank" rel="noopener">People.com — Paul McCartney & Nancy Shevell timeline</a></li>
+            <li><a href="https://people.com/who-is-patti-hansen-keith-richards-wife-7503075" target="_blank" rel="noopener">People.com — Keith Richards & Patti Hansen explainer</a></li>
+            <li><a href="https://www.businessinsider.com/musicians-celebrity-couples-then-and-now" target="_blank" rel="noopener">Business Insider — Musicians couples list (includes Elvis Costello & Diana Krall)</a></li>
+            <li><a href="https://ultimateclassicrock.com/rock-marriages/" target="_blank" rel="noopener">Ultimate Classic Rock — “Rock’s Most Enduring Couples” (legacy list; re-verify)</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/Category:Musical_married_couples" target="_blank" rel="noopener">Wikipedia — Category: Musical married couples</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/Gloria_Estefan" target="_blank" rel="noopener">Wikipedia — Gloria Estefan (marriage date)</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/Patti_Hansen" target="_blank" rel="noopener">Wikipedia — Patti Hansen (marriage date)</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/Personal_relationships_of_Paul_McCartney" target="_blank" rel="noopener">Wikipedia — Personal relationships of Paul McCartney</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/Amy_Grant" target="_blank" rel="noopener">Wikipedia — Amy Grant (marriage to Vince Gill)</a></li>
+          </ul>
+          <p class="smallNote">
+            Note: Wikipedia content is CC BY-SA; this page links to Wikipedia rather than copying large text.
+          </p>
+        </div>
+      </details>
+    </section>
+
+    <footer class="wrap" style="padding: 18px 0 40px;">
+      <div class="card" style="padding:14px;">
+        <div class="row">
+          <span class="pill"><b>Zero-Harm</b> local-only, resettable, no auto-send</span>
+          <span class="pill"><b>Anti-Inversion</b> no rumor loops, source-labeled uncertainty</span>
+          <span class="pill"><b>Remember</b> curation ≠ erasure</span>
+        </div>
+        <p class="smallNote" style="margin-top:10px;">
+          This archive is a values-weighted reference tool. It does not claim to rewrite history or “remove” memories—only to build better defaults.
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <aside class="hud" id="hud" aria-label="Gamification HUD">
+    <div class="hudHeader">
+      <b>HUD: Truth-Weighted Curation</b>
+      <span class="pill" style="margin-left:auto;"><b id="hudMode">SAFE</b></span>
+      <div class="hudMin" id="hudMin" title="Minimize HUD">min</div>
+    </div>
+    <div class="hudBody">
+      <div class="hudGrid">
+        <div class="stat">
+          <div class="k">Truth Points</div>
+          <div class="v" id="tp">0</div>
+        </div>
+        <div class="stat">
+          <div class="k">Verified Entries</div>
+          <div class="v" id="ve">0</div>
+        </div>
+        <div class="stat">
+          <div class="k">Legacy Entries</div>
+          <div class="v" id="le">0</div>
+        </div>
+        <div class="stat">
+          <div class="k">Source Links</div>
+          <div class="v" id="sl">0</div>
+        </div>
+      </div>
+
+      <canvas id="constellation" width="640" height="240" aria-label="Constellation state visualizer"></canvas>
+
+      <div class="hudActions">
+        <button class="btn small good" id="btnQuest" title="Local-only micro-quest that boosts data quality">Micro-Quest</button>
+        <button class="btn small" id="btnHudHelp" title="Explain what the HUD is tracking">HUD Help</button>
+      </div>
+      <div class="smallNote" id="questText" style="margin-top:10px;"></div>
+    </div>
+  </aside>
+
+  <noscript>
+    <div class="wrap">
+      <div class="card" style="padding:14px;">
+        <h2>JavaScript is disabled</h2>
+        <p>
+          This page needs JavaScript for offline storage, search, and rendering. You can still read the source list
+          in the Attributions section, but interactive features won’t run.
+        </p>
+      </div>
+    </div>
+  </noscript>
+
+  <script>
+    /* =========================
+       TOOLTIP: Safety utilities
+       What: Sanitization + gentle local rate limit
+       How to extend: Add additional validators for new fields
+       Outcome: Reduces injection risks and spammy actions
+    ========================== */
+    const Safe = (() => {
+      const esc = (s) => String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#39;");
+
+      const stripCtl = (s) => String(s ?? "").replace(/[\u0000-\u001F\u007F]/g," ").trim();
+
+      const isUrl = (u) => {
+        try {
+          const url = new URL(u);
+          return ["http:","https:"].includes(url.protocol);
+        } catch { return false; }
+      };
+
+      const clampYear = (y) => {
+        const n = Number(String(y).trim());
+        if (!Number.isFinite(n)) return null;
+        if (n < 1900 || n > 2100) return null;
+        return Math.floor(n);
+      };
+
+      const rate = (() => {
+        const last = new Map();
+        return (key, ms=700) => {
+          const now = Date.now();
+          const prev = last.get(key) || 0;
+          if (now - prev < ms) return false;
+          last.set(key, now);
+          return true;
+        };
+      })();
+
+      return { esc, stripCtl, isUrl, clampYear, rate };
+    })();
+
+    /* =========================
+       TOOLTIP: IndexedDB wrapper
+       What: Small promise-based IDB helper
+       How to extend: Add stores/keys; bump DB_VERSION
+       Outcome: Robust offline persistence without libraries
+    ========================== */
+    const DB = (() => {
+      const DB_NAME = "commitment-index-db";
+      const DB_VERSION = 1;
+      const STORE = "kv";
+
+      function open(){
+        return new Promise((resolve,reject)=>{
+          const req = indexedDB.open(DB_NAME, DB_VERSION);
+          req.onupgradeneeded = () => {
+            const db = req.result;
+            if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      async function get(key){
+        const db = await open();
+        return new Promise((resolve,reject)=>{
+          const tx = db.transaction(STORE,"readonly");
+          const st = tx.objectStore(STORE);
+          const req = st.get(key);
+          req.onsuccess = ()=> resolve(req.result ?? null);
+          req.onerror = ()=> reject(req.error);
+        });
+      }
+
+      async function set(key,val){
+        const db = await open();
+        return new Promise((resolve,reject)=>{
+          const tx = db.transaction(STORE,"readwrite");
+          const st = tx.objectStore(STORE);
+          const req = st.put(val, key);
+          req.onsuccess = ()=> resolve(true);
+          req.onerror = ()=> reject(req.error);
+        });
+      }
+
+      async function del(key){
+        const db = await open();
+        return new Promise((resolve,reject)=>{
+          const tx = db.transaction(STORE,"readwrite");
+          const st = tx.objectStore(STORE);
+          const req = st.delete(key);
+          req.onsuccess = ()=> resolve(true);
+          req.onerror = ()=> reject(req.error);
+        });
+      }
+
+      return { get, set, del };
+    })();
+
+    /* =========================
+       TOOLTIP: Seed dataset
+       What: Curated entries with sources + verification level
+       How to extend: Add objects; keep schema stable
+       Outcome: Starts usable immediately; user can expand locally
+    ========================== */
+    const SEED = [
+      {
+        id: "estefan-1978",
+        couple: "Gloria Estefan + Emilio Estefan",
+        since: 1978,
+        status: "together",
+        verification: "verified",
+        tags: ["latin","pop","producer","since 1978","verified"],
+        sources: [
+          "https://people.com/gloria-and-emilio-estefan-relationship-through-the-years-11801711",
+          "https://people.com/gloria-estefan-celebrates-47-years-of-marriage-with-husband-emilio-estefan-11802022",
+          "https://en.wikipedia.org/wiki/Gloria_Estefan"
+        ],
+        note: "Publicly marking 47 years of marriage in 2025 coverage."
+      },
+      {
+        id: "mccartney-2011",
+        couple: "Paul McCartney + Nancy Shevell",
+        since: 2011,
+        status: "together",
+        verification: "verified",
+        tags: ["rock","pop","since 2011","verified"],
+        sources: [
+          "https://people.com/music/paul-mccartney-nancy-shevell-relationship-timeline/",
+          "https://en.wikipedia.org/wiki/Personal_relationships_of_Paul_McCartney"
+        ],
+        note: "Relationship timeline and anniversary coverage."
+      },
+      {
+        id: "richards-1983",
+        couple: "Keith Richards + Patti Hansen",
+        since: 1983,
+        status: "together",
+        verification: "verified",
+        tags: ["rock","since 1983","verified"],
+        sources: [
+          "https://people.com/who-is-patti-hansen-keith-richards-wife-7503075",
+          "https://en.wikipedia.org/wiki/Patti_Hansen"
+        ],
+        note: "Together since 1979; married 1983 (documented in sources)."
+      },
+      {
+        id: "costello-2003",
+        couple: "Elvis Costello + Diana Krall",
+        since: 2003,
+        status: "together",
+        verification: "verified",
+        tags: ["jazz","rock","since 2003","verified"],
+        sources: [
+          "https://www.businessinsider.com/musicians-celebrity-couples-then-and-now"
+        ],
+        note: "Included as still married in 2020 couples feature."
+      },
+      {
+        id: "gill-2000",
+        couple: "Vince Gill + Amy Grant",
+        since: 2000,
+        status: "together",
+        verification: "legacy",
+        tags: ["country","ccm","since 2000","legacy"],
+        sources: [
+          "https://en.wikipedia.org/wiki/Amy_Grant"
+        ],
+        note: "Wikipedia indicates marriage in 2000; please re-verify with a newer reputable source if needed."
+      },
+
+      /* Legacy list entries from Ultimate Classic Rock (2014): marked as legacy by default */
+      {
+        id: "snider-1981",
+        couple: "Dee Snider + Suzette Snider",
+        since: 1981,
+        status: "together",
+        verification: "legacy",
+        tags: ["rock","since 1981","legacy"],
+        sources: ["https://ultimateclassicrock.com/rock-marriages/"],
+        note: "Listed as enduring couple in 2014. Re-verify current status."
+      },
+      {
+        id: "starr-1981",
+        couple: "Ringo Starr + Barbara Bach",
+        since: 1981,
+        status: "together",
+        verification: "legacy",
+        tags: ["rock","since 1981","legacy"],
+        sources: ["https://ultimateclassicrock.com/rock-marriages/"],
+        note: "Listed as enduring couple in 2014. Re-verify current status."
+      },
+      {
+        id: "osbourne-1982",
+        couple: "Ozzy Osbourne + Sharon Osbourne",
+        since: 1982,
+        status: "together",
+        verification: "legacy",
+        tags: ["rock","metal","since 1982","legacy"],
+        sources: ["https://ultimateclassicrock.com/rock-marriages/"],
+        note: "Listed as enduring couple in 2014 with a note about separation/reconciliation. Re-verify current status."
+      },
+      {
+        id: "michael-anthony-1981",
+        couple: "Michael Anthony + Sue Anthony",
+        since: 1981,
+        status: "together",
+        verification: "legacy",
+        tags: ["rock","since 1981","legacy"],
+        sources: ["https://ultimateclassicrock.com/rock-marriages/"],
+        note: "Listed as enduring couple in 2014. Re-verify current status."
+      },
+      {
+        id: "angus-young-1980",
+        couple: "Angus Young + Ellen Young",
+        since: 1980,
+        status: "together",
+        verification: "legacy",
+        tags: ["rock","since 1980","legacy"],
+        sources: ["https://ultimateclassicrock.com/rock-marriages/"],
+        note: "Listed as enduring couple in 2014. Re-verify current status."
+      },
+      {
+        id: "alice-cooper-1976",
+        couple: "Alice Cooper + Sheryl Goddard",
+        since: 1976,
+        status: "together",
+        verification: "legacy",
+        tags: ["rock","since 1976","legacy"],
+        sources: ["https://ultimateclassicrock.com/rock-marriages/"],
+        note: "Listed as enduring couple in 2014. Re-verify current status."
+      }
+    ];
+
+    /* =========================
+       TOOLTIP: App state
+       What: Single source of truth for dataset + filters + points
+       How to extend: Add new state keys; remember to persist
+       Outcome: Predictable behavior; easy debugging
+    ========================== */
+    const STATE = {
+      entries: [],
+      filter: { verifiedOnly:false, legacyOnly:false, q:"" },
+      truthPoints: 0,
+      quest: null,
+      bootedAt: Date.now()
+    };
+
+    const KEYS = {
+      ENTRIES: "entries_v1",
+      TP: "truth_points_v1",
+      QUEST: "quest_v1",
+      HUDMIN: "hud_min_v1"
+    };
+
+    function nowYear(){
+      return new Date().getFullYear();
+    }
+
+    function normalizeEntry(e){
+      const id = Safe.stripCtl(e.id || "").toLowerCase() || ("id-" + Math.random().toString(16).slice(2));
+      const couple = Safe.stripCtl(e.couple || "Unknown");
+      const since = Safe.clampYear(e.since) ?? null;
+      const verification = (String(e.verification||"legacy").toLowerCase().includes("verif")) ? "verified" : "legacy";
+      const tags = Array.isArray(e.tags) ? e.tags.map(t=>Safe.stripCtl(t.toLowerCase())).filter(Boolean).slice(0,18) : [];
+      const sources = Array.isArray(e.sources) ? e.sources.map(u=>Safe.stripCtl(u)).filter(Safe.isUrl).slice(0,12) : [];
+      const status = (e.status==="together") ? "together" : "together";
+      const note = Safe.stripCtl(e.note || "");
+      return { id, couple, since, status, verification, tags, sources, note };
+    }
+
+    function entryYears(e){
+      if (!e.since) return null;
+      return Math.max(0, nowYear() - e.since);
+    }
+
+    function scoreTruthPoints(){
+      let tp = 0;
+      let verified = 0, legacy = 0, links = 0;
+      for (const e of STATE.entries){
+        links += (e.sources?.length||0);
+        if (e.verification === "verified") verified++;
+        else legacy++;
+
+        // points: verified entries are worth more; sources are always worth something
+        tp += (e.verification === "verified") ? 25 : 10;
+        tp += Math.min(30, (e.sources?.length||0) * 5);
+        // longer duration: tiny bonus (caps to avoid weird incentives)
+        const yrs = entryYears(e);
+        if (yrs != null) tp += Math.min(20, Math.floor(yrs/5)*2);
+      }
+      STATE.truthPoints = tp;
+      renderHud(verified, legacy, links);
+    }
+
+    function setFilter(part){
+      STATE.filter = { ...STATE.filter, ...part };
+      persistSoft();
+      render();
+    }
+
+    async function persistSoft(){
+      // persist without spamming disk; local rate limit
+      if (!Safe.rate("persist", 250)) return;
+      await DB.set(KEYS.ENTRIES, STATE.entries);
+      await DB.set(KEYS.TP, STATE.truthPoints);
+      await DB.set(KEYS.QUEST, STATE.quest);
+    }
+
+    function textMatch(hay, needle){
+      return hay.toLowerCase().includes(needle.toLowerCase());
+    }
+
+    function matchesFilter(e){
+      if (STATE.filter.verifiedOnly && e.verification !== "verified") return false;
+      if (STATE.filter.legacyOnly && e.verification !== "legacy") return false;
+      const q = (STATE.filter.q||"").trim();
+      if (!q) return true;
+      const blob = [
+        e.couple, e.note, (e.tags||[]).join(" "), String(e.since||""),
+        (e.verification||"")
+      ].join(" • ");
+      return textMatch(blob, q);
+    }
+
+    function renderEntry(e){
+      const yrs = entryYears(e);
+      const sinceLabel = e.since ? `since ${e.since}` : "since (unknown)";
+      const durLabel = (yrs!=null) ? `• ${yrs} yrs` : "";
+      const verTag = e.verification === "verified"
+        ? `<span class="tag good">VERIFIED</span>`
+        : `<span class="tag warn">LEGACY</span>`;
+
+      const tagHtml = (e.tags||[]).slice(0,14).map(t=>{
+        const cls = (t==="verified") ? "good" : (t==="legacy" ? "warn" : "");
+        return `<span class="tag ${cls}">${Safe.esc(t)}</span>`;
+      }).join("");
+
+      const srcHtml = (e.sources||[]).map(u=>{
+        const display = u.replace(/^https?:\/\//,"").slice(0,72);
+        return `<li><a href="${Safe.esc(u)}" target="_blank" rel="noopener">${Safe.esc(display)}</a></li>`;
+      }).join("");
+
+      const note = e.note ? `<div class="smallNote">${Safe.esc(e.note)}</div>` : "";
+
+      return `
+        <div class="entry" data-id="${Safe.esc(e.id)}">
+          <div class="entryTop">
+            <div class="name">${Safe.esc(e.couple)}</div>
+            <div class="meta">${Safe.esc(sinceLabel)} ${Safe.esc(durLabel)}</div>
+          </div>
+          <div class="tags">
+            ${verTag}
+            ${tagHtml}
+          </div>
+          <div class="sources">
+            <b>Sources</b> (${(e.sources||[]).length})
+            <ul>${srcHtml || "<li class='faint'>No sources yet (add reputable public links).</li>"}</ul>
+            ${note}
+          </div>
+        </div>
+      `;
+    }
+
+    function render(){
+      const list = document.getElementById("list");
+      const total = STATE.entries.length;
+      const shown = STATE.entries.filter(matchesFilter);
+      document.getElementById("countTotal").textContent = total;
+      document.getElementById("countShown").textContent = shown.length;
+
+      // sort: verified first, then longest duration, then alphabetic
+      shown.sort((a,b)=>{
+        if (a.verification !== b.verification) return (a.verification === "verified") ? -1 : 1;
+        const ay = entryYears(a) ?? -1;
+        const by = entryYears(b) ?? -1;
+        if (ay !== by) return by - ay;
+        return a.couple.localeCompare(b.couple);
+      });
+
+      list.innerHTML = shown.map(renderEntry).join("") || `
+        <div class="entry">
+          <div class="entryTop"><div class="name">No matches</div></div>
+          <div class="smallNote">Try a broader search (e.g., “since”, “verified”, “rock”).</div>
+        </div>
+      `;
+
+      scoreTruthPoints();
+      drawConstellation();
+    }
+
+    /* =========================
+       TOOLTIP: Constellation visualizer
+       What: Canvas network keyed to dataset shape
+       How to extend: Encode additional stats as node colors/weights
+       Outcome: Quick “state feel” without tracking users
+    ========================== */
+    function drawConstellation(){
+      const c = document.getElementById("constellation");
+      if (!c) return;
+      const ctx = c.getContext("2d");
+      const W = c.width, H = c.height;
+      ctx.clearRect(0,0,W,H);
+
+      const entries = STATE.entries;
+      const n = Math.min(26, entries.length || 1);
+      const seed = (STATE.truthPoints + entries.length*7) || 42;
+
+      // deterministic PRNG (xorshift)
+      let x = seed | 0;
+      const rnd = () => {
+        x ^= x << 13; x ^= x >> 17; x ^= x << 5;
+        return ((x>>>0) % 10000) / 10000;
+      };
+
+      const nodes = [];
+      for (let i=0;i<n;i++){
+        const e = entries[i % entries.length] || {verification:"legacy"};
+        const vx = 30 + rnd()*(W-60);
+        const vy = 22 + rnd()*(H-44);
+        const w = (e.verification==="verified") ? 1.3 : 1.0;
+        nodes.push({x:vx,y:vy,w});
+      }
+
+      // lines
+      for (let i=0;i<nodes.length;i++){
+        for (let j=i+1;j<nodes.length;j++){
+          const a = nodes[i], b = nodes[j];
+          const dx = a.x-b.x, dy = a.y-b.y;
+          const d = Math.sqrt(dx*dx+dy*dy);
+          if (d < 120){
+            ctx.globalAlpha = Math.max(0, (120-d)/120) * 0.35;
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "rgba(125,211,252,1)";
+            ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+          }
+        }
+      }
+
+      // nodes
+      for (const p of nodes){
+        ctx.globalAlpha = 0.95;
+        ctx.fillStyle = "rgba(196,181,253,1)";
+        ctx.beginPath();
+        ctx.arc(p.x,p.y, 2.2*p.w, 0, Math.PI*2);
+        ctx.fill();
+
+        ctx.globalAlpha = 0.25;
+        ctx.fillStyle = "rgba(125,211,252,1)";
+        ctx.beginPath();
+        ctx.arc(p.x,p.y, 7.2*p.w, 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function renderHud(verified, legacy, links){
+      document.getElementById("tp").textContent = STATE.truthPoints;
+      document.getElementById("ve").textContent = verified;
+      document.getElementById("le").textContent = legacy;
+      document.getElementById("sl").textContent = links;
+      document.getElementById("questText").textContent = STATE.quest?.text || "";
+    }
+
+    /* =========================
+       TOOLTIP: Micro-quests
+       What: Tiny tasks to improve dataset quality
+       How to extend: Add more quests; keep them harmless & respectful
+       Outcome: Gamified nudges toward verification
+    ========================== */
+    function newQuest(){
+      const quests = [
+        "Add a reputable source link to one LEGACY entry (a recent interview/timeline) → +15 TP vibe boost.",
+        "Create 1 new entry and include 2 reputable sources → +20 TP vibe boost.",
+        "Convert a LEGACY entry to VERIFIED only after adding a recent reputable source → +25 TP vibe boost."
+      ];
+      const pick = quests[Math.floor(Math.random()*quests.length)];
+      STATE.quest = { text: "Micro-Quest: " + pick, at: Date.now() };
+      persistSoft();
+      render();
+    }
+
+    /* =========================
+       TOOLTIP: Export/import
+       What: Transparent local-only JSON portability
+       Outcome: User owns their dataset
+    ========================== */
+    function exportJSON(){
+      const payload = JSON.stringify({ entries: STATE.entries, truthPoints: STATE.truthPoints, quest: STATE.quest }, null, 2);
+      const blob = new Blob([payload], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "commitment-index.export.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    }
+
+    function parseImport(txt){
+      const raw = Safe.stripCtl(txt);
+      if (!raw) return null;
+      let obj = null;
+      try { obj = JSON.parse(raw); } catch { return null; }
+      if (!obj || !Array.isArray(obj.entries)) return null;
+      const entries = obj.entries.map(normalizeEntry);
+      return { entries, truthPoints: Number(obj.truthPoints||0) || 0, quest: obj.quest||null };
+    }
+
+    async function mergeImport(pack){
+      const existing = new Map(STATE.entries.map(e=>[e.id,e]));
+      for (const e of pack.entries){
+        existing.set(e.id, e);
+      }
+      STATE.entries = Array.from(existing.values());
+      // keep higher TP if user imported more work
+      STATE.truthPoints = Math.max(STATE.truthPoints, pack.truthPoints||0);
+      if (pack.quest) STATE.quest = pack.quest;
+      await persistSoft();
+      render();
+    }
+
+    async function replaceImport(pack){
+      STATE.entries = pack.entries;
+      STATE.truthPoints = pack.truthPoints || 0;
+      STATE.quest = pack.quest || null;
+      await persistSoft();
+      render();
+    }
+
+    /* =========================
+       TOOLTIP: Parallax motion
+       What: subtle mouse/touch parallax; respects reduced motion
+       Outcome: “alive” without nausea
+    ========================== */
+    function setupParallax(){
+      const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) return;
+
+      const layers = Array.from(document.querySelectorAll(".layer"));
+      let targetX=0, targetY=0, curX=0, curY=0;
+
+      function onMove(ev){
+        const x = (ev.touches ? ev.touches[0].clientX : ev.clientX) || window.innerWidth/2;
+        const y = (ev.touches ? ev.touches[0].clientY : ev.clientY) || window.innerHeight/2;
+        targetX = (x / window.innerWidth - 0.5) * 2;
+        targetY = (y / window.innerHeight - 0.5) * 2;
+      }
+
+      function tick(){
+        curX += (targetX - curX) * 0.06;
+        curY += (targetY - curY) * 0.06;
+        for (const el of layers){
+          const d = Number(el.dataset.depth || 0.2);
+          const tx = curX * d * 18;
+          const ty = curY * d * 14;
+          el.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+        }
+        requestAnimationFrame(tick);
+      }
+
+      window.addEventListener("mousemove", onMove, {passive:true});
+      window.addEventListener("touchmove", onMove, {passive:true});
+      tick();
+    }
+
+    /* =========================
+       TOOLTIP: Boot sequence
+       What: loads state, seeds if empty, hides splash
+       Outcome: predictable offline-first startup
+    ========================== */
+    async function boot(){
+      setupParallax();
+
+      const splash = document.getElementById("splash");
+      const splashMsg = document.getElementById("splashMsg");
